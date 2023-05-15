@@ -38,6 +38,12 @@ class AlexNet(nn.Module):
         self.fc2= nn.Sequential(
             nn.Linear(4096, num_classes))
         
+    def loss(self):
+        return nn.CrossEntropyLoss()
+
+    def optimizer(self):
+        torch.optim.SGD(model.parameters(), lr=1e-3, weight_decay = 0.001, momentum = 0.9)
+        
     def forward(self, x):
         out = self.layer1(x)
         out = self.layer2(out)
@@ -49,3 +55,16 @@ class AlexNet(nn.Module):
         out = self.fc1(out)
         out = self.fc2(out)
         return out
+    
+    def backward(self, dout):
+        dout = self.fc2.backward(dout)
+        dout = self.fc2.backward(dout)
+        dout = self.fc.backward(dout)
+
+        dout = self.layer5.backward(dout)
+        dout = self.layer4.backward(dout)
+        dout = self.layer3.backward(dout)
+        dout = self.layer2.backward(dout)
+        dout = self.layer1.backward(dout)
+
+        return dout
